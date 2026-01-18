@@ -1,5 +1,6 @@
 import { useState } from "react"
 import toast from "react-hot-toast";
+import APIs from "../services/service";
 
 const PROJECTS = [
     "Viso Internal",
@@ -8,6 +9,7 @@ const PROJECTS = [
     "Personal Development",
 ];
 
+const api = new APIs();
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
 const EntryForm = () => {
@@ -18,8 +20,27 @@ const EntryForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        toast.success("SAVED");
-    }
+
+        try {
+            const data = {
+                date,
+                project,
+                hours: Number(hours),
+                description: description.trim(),
+            };
+
+            await api.createEntry(data);
+            toast.success("Entry saved :)");
+
+            setDate(todayISO());
+            setHours("");
+            setDescription("");
+        } catch (error: any) {
+            const msg =
+                typeof error === "string" ? error : error?.message || "Error";
+            toast.error(msg);
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-3 flex gap-4 w-full border p-2 bg-white">
