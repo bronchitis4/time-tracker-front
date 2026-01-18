@@ -8,7 +8,7 @@ export type Entry = {
 };
 
 export default class APIs {
-    baseUrl = "http://localhost:3000";
+    baseUrl = import.meta.env.VITE_API_BASE_URL;
 
     async createEntry(entry: Entry ) {
         const res = await fetch(`${this.baseUrl}/entries`, {
@@ -30,16 +30,14 @@ export default class APIs {
         return data;
     }
 
-    async getEntries() {
-        const res = await fetch(`${this.baseUrl}/entries`);
+    async getEntries(params?: { limit?: number; cursor?: string | null }) {
+        const limit = params?.limit || '';
+        const cursor = params?.cursor || '';
+        const res = await fetch(`${this.baseUrl}/entries?limit=${limit}&cursor=${cursor}`);
         const data = await res.json();
 
         if (!res.ok) {
-            const msg = Array.isArray(data.message)
-                ? data.message[0]
-                : data.message || "Failed to fetch entries";
-
-            throw new Error(msg);
+            throw new Error(data.message?.[0] || data.message || "Failed to fetch");
         }
 
         return data;

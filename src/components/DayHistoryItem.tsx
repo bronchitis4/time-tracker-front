@@ -1,18 +1,5 @@
 import { memo, useState } from "react";
-
-
-type EntryItem = {
-    id: string | number;
-    project: string;
-    hours: number | string;
-    description: string;
-};
-
-type DayGroup = {
-    date: string;
-    total: number | string;
-    items: EntryItem[];
-};
+import type { DayGroup } from "../types/entries";
 
 const DayHistoryItem = memo(function DayHistoryItem({ day }: { day: DayGroup }) {
     const [openIds, setOpenIds] = useState<Set<string | number>>(new Set());

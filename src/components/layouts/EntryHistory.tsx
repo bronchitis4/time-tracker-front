@@ -1,25 +1,16 @@
-import { memo, useMemo } from "react";
-import { useEntries } from "../../hooks/useEntries";
-import DayHistoryItem from "../EntriesListItem";
-import APIs from "../../services/service";
+import { useMemo } from "react";
+import DayHistoryItem from "../DayHistoryItem"
+import type { DayGroup } from "../../types/entries";
 
-type EntryItem = {
-  id: string | number;
-  project: string;
-  hours: number | string;
-  description: string;
+type Props = {
+  days: DayGroup[];
+  loading: boolean;
+  loadMore: () => void;
+  nextCursor: any;
+  hasMore: boolean;
 };
 
-type DayGroup = {
-  date: string;
-  total: number | string;
-  items: EntryItem[];
-};
-
-const api = new APIs();
-
-const EntryHistory = () => {
-  const { days, loading, loadMore, nextCursor } = useEntries(api, 20);
+const EntryHistory = ({ days, loading, loadMore, nextCursor, hasMore }: Props) => {
 
   const grandTotal = useMemo(() => {
     return days.reduce((sum: number, d: DayGroup) => sum + Number(d.total), 0);
@@ -32,7 +23,7 @@ const EntryHistory = () => {
     <h2 className="text-xl font-semibold">History</h2>
 
     {days.length === 0 ? (
-      <p>NULL</p>
+      <p>History is empty</p>
     ) : (
       <>
         {days.map((day: DayGroup) => (
@@ -44,7 +35,7 @@ const EntryHistory = () => {
 
           <button
             onClick={loadMore}
-            disabled={!nextCursor}
+            disabled={!nextCursor || !hasMore}
             className="border rounded px-3 py-1 disabled:opacity-50"
           >
             Load more

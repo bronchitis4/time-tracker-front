@@ -12,9 +12,9 @@ const PROJECTS = [
 const api = new APIs();
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
-const EntryForm = () => {
+const EntryForm = ({days, onSuccess}: {days: any; onSuccess?: () => void}) => {
     const [date, setDate] = useState(todayISO());
-    const [project, setProject] = useState("");
+    const [project, setProject] = useState(PROJECTS[0]);
     const [hours, setHours] = useState("");
     const [description, setDescription] = useState<string>("");
 
@@ -35,6 +35,8 @@ const EntryForm = () => {
             setDate(todayISO());
             setHours("");
             setDescription("");
+            
+            if (onSuccess) onSuccess();
         } catch (error: any) {
             const msg =
                 typeof error === "string" ? error : error?.message || "Error";
@@ -43,7 +45,7 @@ const EntryForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-3 flex gap-4 w-full border p-2 bg-white">
+        <form onSubmit={handleSubmit} className="sticky top-0 z-10 space-y-3 flex gap-4 w-full border p-2 bg-white">
             <div className="w-[70%] space-y-1">
                 <div className="space-y-1">
                     <label className="block text-left">Project</label>
